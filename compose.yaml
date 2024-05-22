@@ -1,0 +1,35 @@
+services:
+  dependencies-cpu:
+    image: "how-to-trace-cuda-dependencies-cpu"
+    build:
+      context: "."
+      target: "dependencies"
+
+    tty: true
+
+    volumes:
+      - ./how-to-trace-cuda:/opt/how-to-trace-cuda
+  
+  dependencies-gpu:
+    image: "how-to-trace-cuda-dependencies-gpu"
+    build:
+      context: "."
+      target: "dependencies"
+
+    # Set container to this mode in order to be able to 
+    # have access to perfomance counters registers this
+    # can help https://developer.nvidia.com/nvidia-development-tools-solutions-err_nvgpuctrperm-permission-issue-performance-counters
+    privileged: true
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+
+    tty: true
+
+    volumes:
+      - ./how-to-trace-cuda:/opt/how-to-trace-cuda
